@@ -1,4 +1,13 @@
-import { DataTypes, Model, Sequelize, ModelCtor } from 'sequelize';
+import {
+  DataTypes,
+  Model,
+  Sequelize,
+  ModelCtor,
+  HasManyGetAssociationsMixin,
+} from 'sequelize';
+import { Cart } from './cart';
+import { Token } from './token';
+import { Order } from './order';
 
 export class User extends Model {
   public id!: number;
@@ -9,6 +18,16 @@ export class User extends Model {
   public image?: string;
   public address?: string;
 
+  // 🔗 Associations typing
+  public getCarts!: HasManyGetAssociationsMixin<Cart>;
+  public carts?: Cart[];
+
+  public getTokens!: HasManyGetAssociationsMixin<Token>;
+  public tokens?: Token[];
+
+  public getOrders!: HasManyGetAssociationsMixin<Order>;
+  public orders?: Order[];
+
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -17,7 +36,7 @@ export const initUserModel = (sequelize: Sequelize): ModelCtor<User> => {
   User.init(
     {
       id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER, // signed integer to match other FK columns
         autoIncrement: true,
         primaryKey: true,
       },
@@ -36,6 +55,7 @@ export const initUserModel = (sequelize: Sequelize): ModelCtor<User> => {
       },
       phone: {
         type: DataTypes.STRING,
+        allowNull: true,
       },
       image: {
         type: DataTypes.STRING,
@@ -43,12 +63,15 @@ export const initUserModel = (sequelize: Sequelize): ModelCtor<User> => {
       },
       address: {
         type: DataTypes.STRING,
+        allowNull: true,
       },
     },
     {
       sequelize,
-      tableName: 'Users',
+      tableName: 'users', // lowercase to match other tables
       timestamps: true,
+      createdAt: 'createdAt',
+      updatedAt: 'updatedAt',
     }
   );
 

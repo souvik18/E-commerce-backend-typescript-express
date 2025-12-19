@@ -1,7 +1,7 @@
 import db from '../models';
 import bcrypt from 'bcrypt';
 import { InferAttributes, InferCreationAttributes } from 'sequelize';
-import { User } from '../models/user'; 
+import { User } from '../models/user';
 
 const SALT_ROUNDS = 10;
 

@@ -1,21 +1,28 @@
-import { DataTypes, Model, Optional } from 'sequelize';
-import sequelize from '../config/database';
+import {
+  Model,
+  DataTypes,
+  Sequelize,
+  Optional,
+  HasManyGetAssociationsMixin,
+} from 'sequelize';
+import { CartItem } from './cart_items';
+import { OrderItem } from './order_item';
 
-interface ProductAttributes {
+export interface ProductAttributes {
   id: number;
   name: string;
   price: number;
   image?: string;
   imagePath?: string;
   imageSize?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
-interface ProductCreationAttributes
-  extends Optional<ProductAttributes, 'id' | 'image' | 'imagePath' | 'imageSize' | 'createdAt' | 'updatedAt'> {}
+export interface ProductCreationAttributes extends Optional<
+  ProductAttributes,
+  'id' | 'image' | 'imagePath' | 'imageSize'
+> {}
 
-class Product
+export class Product
   extends Model<ProductAttributes, ProductCreationAttributes>
   implements ProductAttributes
 {
@@ -26,43 +33,55 @@ class Product
   public imagePath?: string;
   public imageSize?: number;
 
+  // 🔗 Associations typing
+  public getCartItems!: HasManyGetAssociationsMixin<CartItem>;
+  public cartItems?: CartItem[];
+
+  public getOrderItems!: HasManyGetAssociationsMixin<OrderItem>;
+  public orderItems?: OrderItem[];
+
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-Product.init(
-  {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
+// Initialize model
+export const initProductModel = (sequelize: Sequelize) => {
+  Product.init(
+    {
+      id: {
+        type: DataTypes.INTEGER, // signed integer
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING(255),
+        allowNull: false,
+      },
+      price: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      imagePath: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      imageSize: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
     },
-    name: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-    price: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    image: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    imagePath: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    imageSize: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-  },
-  {
-    sequelize,
-    tableName: 'products',
-    timestamps: true,
-  }
-);
+    {
+      sequelize,
+      tableName: 'products',
+      timestamps: true,
+      // createdAt: 'created_at',
+      // updatedAt: 'updated_at',
+    }
+  );
 
-export default Product;
+  return Product;
+};

@@ -11,5 +11,7 @@ export const generateAccessToken = (payload: object) =>
 export const generateRefreshToken = (payload: object) =>
   jwt.sign(payload, REFRESH_SECRET, { expiresIn: REFRESH_EXPIRES_IN });
 
-export const verifyAccessToken = (token: string) => jwt.verify(token, JWT_SECRET);
-export const verifyRefreshToken = (token: string) => jwt.verify(token, REFRESH_SECRET);
+export const verifyAccessToken = (token: string) =>
+  jwt.verify(token, JWT_SECRET);
+export const verifyRefreshToken = (token: string) =>
+  jwt.verify(token, REFRESH_SECRET);

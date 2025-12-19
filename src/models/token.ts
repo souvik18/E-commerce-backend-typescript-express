@@ -12,10 +12,16 @@ interface TokenAttributes {
 }
 
 // Define which attributes are optional when creating a new instance
-interface TokenCreationAttributes extends Optional<TokenAttributes, 'id' | 'revoked' | 'revokedAt' > {}
+interface TokenCreationAttributes extends Optional<
+  TokenAttributes,
+  'id' | 'revoked' | 'revokedAt'
+> {}
 
 // Define the model class
-export class Token extends Model<TokenAttributes, TokenCreationAttributes> implements TokenAttributes {
+export class Token
+  extends Model<TokenAttributes, TokenCreationAttributes>
+  implements TokenAttributes
+{
   public id!: number;
   public user_id!: number;
   public refreshToken!: string;
